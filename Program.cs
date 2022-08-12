@@ -1,3 +1,5 @@
+using Microsoft.OpenApi.Models;
+using System.Reflection.Metadata;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -5,7 +7,42 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+
+builder.Services.AddSwaggerGen(
+ opt =>
+ {
+     opt.AddSecurityDefinition("AccountsOpenID", new OpenApiSecurityScheme
+     {
+         In = ParameterLocation.Header,
+         Name = "Authorization",
+         Type = SecuritySchemeType.OpenIdConnect,
+         OpenIdConnectUrl = new Uri("https://HOST/realms/REALME/.well-known/openid-configuration"),
+
+
+
+
+     });
+
+     opt.AddSecurityRequirement(new OpenApiSecurityRequirement
+     {
+         {
+             new OpenApiSecurityScheme
+             {
+                 Reference = new OpenApiReference
+                 {
+                     Type = ReferenceType.SecurityScheme,
+                     Id = "Authorization"
+                 }
+             },
+             new string[] {}
+         }
+     });
+
+ }
+
+
+);
 
 var app = builder.Build();
 
