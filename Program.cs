@@ -1,5 +1,11 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Reflection.Metadata;
+
+
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -39,10 +45,31 @@ builder.Services.AddSwaggerGen(
          }
      });
 
- }
+ });
 
 
-);
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.Authority = "https://kc.pstefano.com.br/realms/dotnet_keycloak";
+
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+
+            ValidateIssuer = true,
+
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = false,
+            ValidIssuer = "https://kc.pstefano.com.br/realms/dotnet_keycloak",
+
+
+            ValidAudience = "dotnet_teste",
+
+        };
+    });
+
 
 var app = builder.Build();
 
